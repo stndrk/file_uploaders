@@ -15,3 +15,4 @@
 7. rails db:migrate
 8. Create an .env file in the root directory of the project and add mail and pasd
 9. Run the Rails Application Start the Rails server:
+
