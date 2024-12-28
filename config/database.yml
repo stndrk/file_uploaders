@@ -1,0 +1,28 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV['DB_USERNAME'] || 'satendra' %>   # You can change 'postgres' to your PostgreSQL username
+  password: <%= ENV['DB_PASSWORD'] || 'password' %>   # Use the appropriate password or set it as an env variable
+  host: localhost
+
+development:
+  <<: *default
+  database: file_uploader_development
+  # You can explicitly specify the username and password in the development environment, if needed:
+  # username: your_development_db_user
+  # password: your_development_db_password
+
+test:
+  <<: *default
+  database: file_uploader_test
+
+production:
+  <<: *default
+  database: file_uploader_production
+  username: <%= ENV['DB_USERNAME'] || 'postgres' %>  # Use production username if different
+  password: <%= ENV['DB_PASSWORD'] || 'your_password' %>  # Use production password
+  host: <%= ENV['DATABASE_HOST'] || 'localhost' %>  # Use production host if different
+  port: 5432
+  pool: 5
+  timeout: 5000
