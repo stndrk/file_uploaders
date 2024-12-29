@@ -8,19 +8,20 @@ class UploadedFile < ApplicationRecord
   # Validations
   validates :title, :description, presence: true
   validates :file, presence: true
-  validate :correct_file_type
+  validate :correct_file_size
 
   before_save :compress_file
 
   private
 
-  # Custom validation to check for allowed content types
-  def correct_file_type
-    allowed_content_types = ["image/png", "image/jpg", "image/jpeg", "application/pdf", "application/zip", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"]
+  # Custom validation to check for file size (max 1 GB)
+  def correct_file_size
+    return unless file.attached?
 
-    return unless file.attached? && allowed_content_types.exclude?(file.content_type)
+    max_size = 1.gigabyte
+    return unless file.byte_size > max_size
 
-    errors.add(:file, "must be a valid file type")
+    errors.add(:file, "File size cannot be greater than 1 GB.")
   end
 
   # Compress file before saving (if image)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# app/controllers/uploaded_files_controller.rb
 class UploadedFilesController < ApplicationController
   before_action :authenticate_user!
 
@@ -57,9 +56,11 @@ class UploadedFilesController < ApplicationController
     @file_upload = UploadedFile.find(params[:file_id])
     recipient_email = params[:email]
     file_path = Rails.public_path.join("uploads", "#{@file_upload.title}#{File.extname(@file_upload.file_path)}")
+    file_url = "#{request.protocol}#{request.host_with_port}/public/uploads/#{@file_upload.title}#{File.extname(@file_upload.file_path)}"
+    tiny_url = generate_short_url(file_url)
 
     if File.exist?(file_path)
-      FileMailer.share_file(@file_upload, recipient_email, file_path).deliver_now
+      FileMailer.share_file(@file_upload, recipient_email, file_path, tiny_url).deliver_now
       redirect_to dashboard_path, notice: "File has been shared successfully!"
     else
       redirect_to dashboard_path, alert: "File not found. Please try again."
@@ -73,6 +74,16 @@ class UploadedFilesController < ApplicationController
   end
 
   def generate_short_url(long_url)
-    UrlShortener.shorten(long_url)
+    response = RestClient.get "https://api.tinyurl.com/create",
+                              {
+                                params:  {url: long_url},
+                                headers: {"Authorization" => "Bearer 089eeb94-e4d8-41ef-9d30-fbf84ffb9e6c"}
+                              }
+
+    data = JSON.parse(response.body)
+    data["data"]["url"] if response.code == 200
+  rescue StandardError => e
+    Rails.logger.error "Error generating short URL: #{e.message}"
+    long_url
   end
 end
