@@ -7,7 +7,7 @@ class UploadedFilesController < ApplicationController
     @file_upload = UploadedFile.new
   end
 
-  def create
+  def create # rubocop:disable Metrics/MethodLength
     @file_upload = UploadedFile.new(uploaded_file_params)
     @file_upload.user = current_user
 

@@ -2,10 +2,12 @@
 
 class AddDetailsToUploadedFiles < ActiveRecord::Migration[8.0]
   def change
-    add_column :uploaded_files, :file_path, :string
-    add_column :uploaded_files, :send_status, :string
-    add_column :uploaded_files, :send_mail, :boolean
-    add_column :uploaded_files, :other_data, :text
-    add_column :uploaded_files, :file_url, :string
+    change_table :uploaded_files, bulk: true do |t|
+      t.string :file_path
+      t.string :send_status
+      t.boolean :send_mail, default: false, null: false
+      t.text :other_data
+      t.string :file_url
+    end
   end
 end

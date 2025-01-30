@@ -86,6 +86,7 @@
                       <th class="t-op">Title</th>
                       <th class="t-op">Description</th>
                       <th class="t-op">Uploaded Date</th>
+                      <th class="t-op">View</th>
                       <th class="t-op">Action</th>
                     </tr>
                   </thead>
@@ -97,6 +98,8 @@
                         <td class="t-op-nextlvl"><%= file.title %></td>
                         <td class="t-op-nextlvl" style="text-align:center"><%= file.description %></td>
                         <td class="t-op-nextlvl" style="text-align:center"><%= file.created_at.strftime("%B %d, %Y") %></td>
+                        <td class="t-op-nextlvl" style="text-align:left"><button onclick="viewFile('<%= file.file_path %>')">Redirect</button></td>
+                      </tr>
                         <td class="t-op-nextlvl">
                           <button 
                             class="delete-link" 
@@ -139,6 +142,11 @@
             if (event.target == modal) {
                 modal.classList.remove('show'); 
             }
+        };
+
+        function viewFile(filePath) {
+          const relativePath = filePath.split('/public')[1];
+          window.open(relativePath, "_blank")
         };
 
         function deleteFile(fileId) {
